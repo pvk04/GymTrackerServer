@@ -1,6 +1,6 @@
-import { Router } from 'express';
-import { userRouter } from './userRouter.js';
+import { Router } from "express";
+import { userRouter } from "./userRouter.js";
 
 export const appRouter = Router();
 
-appRouter.use('/auth', userRouter);
+appRouter.use("/auth", userRouter);
