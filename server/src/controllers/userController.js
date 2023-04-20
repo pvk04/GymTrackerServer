@@ -3,7 +3,18 @@ import { userService } from "../services/userService.js";
 async function registration(req, res, next) {
 	try {
 		const { nickname, email, dateBirth, password } = req.body;
-		userService.registration(nickname, email, dateBirth, password);
+		const userData = await userService.registration(
+			nickname,
+			email,
+			dateBirth,
+			password
+		);
+		res.cookie("refreshToken", userData.refreshToken, {
+			maxAge: 30 * 24 * 60 * 60 * 1000,
+			httpOnly: true,
+		});
+
+		return res.json(userData);
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({ message: "Registration error" });
@@ -28,9 +39,13 @@ async function logout(req, res, next) {
 
 async function activate(req, res, next) {
 	try {
+		const { link } = req.params;
+		await userService.activate(link);
+
+		return res.redirect(process.env.CLIENT_URL);
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ message: "Login error" });
+		res.status(400).json({ message: "Activate error" });
 	}
 }
 

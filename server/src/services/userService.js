@@ -12,9 +12,6 @@ async function registration(nickname, email, dateBirth, password) {
 		`SELECT * from Users where UserNickname = '${nickname}'`
 	);
 
-	console.log(candidateEmail);
-	console.log(candidateNickname);
-
 	if (candidateEmail.length > 0) {
 		throw new Error(`Email адрес ${email} занят`);
 	}
@@ -23,12 +20,14 @@ async function registration(nickname, email, dateBirth, password) {
 	}
 
 	const hashPassword = await bcrypt.hash(password, 3);
-	console.log(hashPassword.length);
 	const activationLink = uuidv4();
 	const [user] = await connection.execute(
-		`INSERT INTO Users(UserNickname, UserDateBirth, UserEmail, UserPassword) VALUES ('${nickname}', '${dateBirth}', '${email}', '${hashPassword}');`
+		`INSERT INTO Users(UserNickname, UserDateBirth, UserEmail, UserPassword, UserEmailActivationLink) VALUES ('${nickname}', '${dateBirth}', '${email}', '${hashPassword}', '${activationLink}');`
 	);
-	await mailService.sendActivationMail(email, activationLink);
+	await mailService.sendActivationMail(
+		email,
+		`${process.env.API_URL}/auth/activate/${activationLink}`
+	);
 	const tokens = tokenService.generateToken({
 		id: user.insertId,
 		nickname,
@@ -40,6 +39,21 @@ async function registration(nickname, email, dateBirth, password) {
 	};
 }
 
+async function activate(link) {
+	const [
+		user,
+	] = `select * from users where UserEmailActivationLink = '${link}';`;
+
+	if (user.length == 0) {
+		throw new Error("Ошибка активации");
+	}
+
+	const [response] = await connection.execute(
+		`UPDATE users SET UserEmailActivated = 1 WHERE UserEmailActivationLink = '${link}';`
+	);
+}
+
 export const userService = {
 	registration,
+	activate,
 };
