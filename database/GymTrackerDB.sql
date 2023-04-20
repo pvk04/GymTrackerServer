@@ -11,6 +11,7 @@ create table Users(
     UserDateBirth date not null,
     UserWeight int null check(UserWeight >= 0), -- measure types managment?
     UserEmail varchar(100) not null unique,
+    UserEmailActivated tinyint(1) not null default 0,
     UserPassword varchar(20) not null -- password hash max length?
 );
 
