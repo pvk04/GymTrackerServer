@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import connection from "../database/index.js";
 import { mailService } from "./mailService.js";
 import { tokenService } from "./tokenService.js";
+import { ApiError } from "../exeptions/apiError.js";
 
 async function registration(nickname, email, dateBirth, password) {
 	const [candidateEmail] = await connection.execute(
@@ -13,10 +14,10 @@ async function registration(nickname, email, dateBirth, password) {
 	);
 
 	if (candidateEmail.length > 0) {
-		throw new Error(`Email адрес ${email} занят`);
+		throw ApiError.BadRequest(`Email адрес ${email} занят`);
 	}
 	if (candidateNickname.length > 0) {
-		throw new Error(`Никнейм ${nickname} занят`);
+		throw ApiError.BadRequest(`Никнейм ${nickname} занят`);
 	}
 
 	const hashPassword = await bcrypt.hash(password, 3);
@@ -45,7 +46,7 @@ async function activate(link) {
 	] = `select * from users where UserEmailActivationLink = '${link}';`;
 
 	if (user.length == 0) {
-		throw new Error("Ошибка активации");
+		throw ApiError.BadRequest("Ошибка активации");
 	}
 
 	const [response] = await connection.execute(

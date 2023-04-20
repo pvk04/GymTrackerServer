@@ -16,24 +16,21 @@ async function registration(req, res, next) {
 
 		return res.json(userData);
 	} catch (e) {
-		console.log(e);
-		res.status(400).json({ message: "Registration error" });
+		next(e);
 	}
 }
 
 async function login(req, res, next) {
 	try {
 	} catch (e) {
-		console.log(e);
-		res.status(400).json({ message: "Login error" });
+		next(e);
 	}
 }
 
 async function logout(req, res, next) {
 	try {
 	} catch (e) {
-		console.log(e);
-		res.status(400).json({ message: "Login error" });
+		next(e);
 	}
 }
 
@@ -44,24 +41,21 @@ async function activate(req, res, next) {
 
 		return res.redirect(process.env.CLIENT_URL);
 	} catch (e) {
-		console.log(e);
-		res.status(400).json({ message: "Activate error" });
+		next(e);
 	}
 }
 
 async function refresh(req, res, next) {
 	try {
 	} catch (e) {
-		console.log(e);
-		res.status(400).json({ message: "Login error" });
+		next(e);
 	}
 }
 
 async function getUsers(req, res, next) {
 	try {
 	} catch (e) {
-		console.log(e);
-		res.status(400).json({ message: "Login error" });
+		next(e);
 	}
 }
 
