@@ -13,4 +13,28 @@ function generateToken(payload) {
 	};
 }
 
-export const tokenService = { generateToken };
+function validateAccessToken(token) {
+	try {
+		const userData = jwt.verify(token, proccess.env.JWT_ACCESS_SECRET);
+
+		return userData;
+	} catch (e) {
+		return null;
+	}
+}
+
+function validateRefreshToken(token) {
+	try {
+		const userData = jwt.verify(token, proccess.env.JWT_REFRESH_SECRET);
+
+		return userData;
+	} catch (e) {
+		return null;
+	}
+}
+
+export const tokenService = {
+	generateToken,
+	validateAccessToken,
+	validateRefreshToken,
+};

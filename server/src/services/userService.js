@@ -64,6 +64,29 @@ async function login(email, password) {
 	};
 }
 
+async function refresh(userId, refreshToken) {
+	if (!refreshToken) {
+		throw ApiError.UnauthorizedUser();
+	}
+	const userData = tokenService.validateRefreshToken(refreshToken);
+	const [[user]] = await connection.execute(
+		`SELECT * FROM users WHERE userid = ${userId};`
+	);
+	if (!userData || !user) {
+		throw ApiError.UnauthorizedUser();
+	}
+
+	const tokens = tokenService.generateToken({
+		id: user.UserId,
+		nickname: user.UserNickname,
+		email: user.UserEmail,
+	});
+
+	return {
+		...tokens,
+	};
+}
+
 async function activate(link) {
 	const [
 		user,
@@ -80,5 +103,6 @@ async function activate(link) {
 export const userService = {
 	registration,
 	login,
+	refresh,
 	activate,
 };
