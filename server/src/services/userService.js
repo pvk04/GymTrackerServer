@@ -12,7 +12,6 @@ async function registration(nickname, email, dateBirth, password) {
 	const [candidateNickname] = await connection.execute(
 		`SELECT * from Users where UserNickname = '${nickname}'`
 	);
-
 	if (candidateEmail.length > 0) {
 		throw ApiError.BadRequest(`Email адрес ${email} занят`);
 	}
@@ -40,12 +39,36 @@ async function registration(nickname, email, dateBirth, password) {
 	};
 }
 
+async function login(email, password) {
+	const [[user]] = await connection.execute(
+		`SELECT * FROM users WHERE useremail = '${email}';`
+	);
+
+	if (!user) {
+		throw ApiError.BadRequest("Пользователь с таким email не найден");
+	}
+
+	const isPassEqual = await bcrypt.compare(password, user.UserPassword);
+	if (!isPassEqual) {
+		throw ApiError.BadRequest("Неверный пароль");
+	}
+
+	const tokens = tokenService.generateToken({
+		id: user.UserId,
+		nickname: user.UserNickname,
+		email: user.UserEmail,
+	});
+
+	return {
+		...tokens,
+	};
+}
+
 async function activate(link) {
 	const [
 		user,
 	] = `select * from users where UserEmailActivationLink = '${link}';`;
-
-	if (user.length == 0) {
+	if (user.length === 0) {
 		throw ApiError.BadRequest("Ошибка активации");
 	}
 
@@ -56,5 +79,6 @@ async function activate(link) {
 
 export const userService = {
 	registration,
+	login,
 	activate,
 };

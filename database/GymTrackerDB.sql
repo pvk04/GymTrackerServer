@@ -3,16 +3,17 @@ use GymTracker;
 
 create table Users(
 	UserId int primary key auto_increment,
-    UserNickname varchar(50) not null unique,
+    UserNickname varchar(20) not null unique,
     HeightInFt tinyint(1) not null default 0, -- if 0 - kg, else in ft
     WeightInLb tinyint(1) not null default 0, -- if 0 - kg, else Lb
     DistanceIn tinyint(1) not null default 0, -- if 0 - metres, else miles
-    UserHeight int null check(UserHeight >= 0), -- measure types managment?
+    UserHeight int null check(UserHeight >= 0),
     UserDateBirth date not null,
-    UserWeight int null check(UserWeight >= 0), -- measure types managment?
+    UserWeight int null check(UserWeight >= 0),
     UserEmail varchar(100) not null unique,
     UserEmailActivated tinyint(1) not null default 0,
-    UserPassword varchar(20) not null -- password hash max length?
+    UserEmailActivationLink varchar(36) not null,
+    UserPassword varchar(60) not null
 );
 
 create table Workout(
