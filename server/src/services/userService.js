@@ -4,6 +4,7 @@ import connection from "../database/index.js";
 import { mailService } from "./mailService.js";
 import { tokenService } from "./tokenService.js";
 import { ApiError } from "../exeptions/apiError.js";
+import { UserDto } from "../dtos/userDto.js";
 
 async function registration(nickname, email, dateBirth, password) {
 	const [candidateEmail] = await connection.execute(
@@ -28,14 +29,18 @@ async function registration(nickname, email, dateBirth, password) {
 		email,
 		`${process.env.API_URL}/auth/activate/${activationLink}`
 	);
-	const tokens = tokenService.generateToken({
+
+	const userDto = {
 		id: user.insertId,
 		nickname,
 		email,
-	});
+		emailActivated: 0,
+	};
+	const tokens = tokenService.generateToken(userDto);
 
 	return {
 		...tokens,
+		user: userDto,
 	};
 }
 
@@ -53,14 +58,12 @@ async function login(email, password) {
 		throw ApiError.BadRequest("Неверный пароль");
 	}
 
-	const tokens = tokenService.generateToken({
-		id: user.UserId,
-		nickname: user.UserNickname,
-		email: user.UserEmail,
-	});
+	const userDto = new UserDto(user);
+	const tokens = tokenService.generateToken(userDto);
 
 	return {
 		...tokens,
+		user: userDto,
 	};
 }
 
@@ -76,14 +79,12 @@ async function refresh(userId, refreshToken) {
 		throw ApiError.UnauthorizedUser();
 	}
 
-	const tokens = tokenService.generateToken({
-		id: user.UserId,
-		nickname: user.UserNickname,
-		email: user.UserEmail,
-	});
+	const userDto = new UserDto(user);
+	const tokens = tokenService.generateToken(userDto);
 
 	return {
 		...tokens,
+		user: userDto,
 	};
 }
 
