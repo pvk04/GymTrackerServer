@@ -36,11 +36,11 @@ async function registration(nickname, email, dateBirth, password) {
 		email,
 		emailActivated: 0,
 	};
-	const tokens = tokenService.generateToken(userDto);
+	const tokens = tokenService.generateToken({ ...userDto });
 
 	return {
 		...tokens,
-		user: userDto,
+		user: { ...userDto },
 	};
 }
 
@@ -59,11 +59,11 @@ async function login(email, password) {
 	}
 
 	const userDto = new UserDto(user);
-	const tokens = tokenService.generateToken(userDto);
+	const tokens = tokenService.generateToken({ ...userDto });
 
 	return {
 		...tokens,
-		user: userDto,
+		user: { ...userDto },
 	};
 }
 
@@ -80,11 +80,11 @@ async function refresh(userId, refreshToken) {
 	}
 
 	const userDto = new UserDto(user);
-	const tokens = tokenService.generateToken(userDto);
+	const tokens = tokenService.generateToken({ ...userDto });
 
 	return {
 		...tokens,
-		user: userDto,
+		user: { ...userDto },
 	};
 }
 
