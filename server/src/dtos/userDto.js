@@ -9,5 +9,10 @@ export class UserDto {
 		this.nickname = model.UserNickname;
 		this.email = model.UserEmail;
 		this.emailActivated = model.UserEmailActivated;
+		this.height = model.UserHeight;
+		this.heightMeasure = model.HeightInFt;
+		this.weight = model.UserWeight;
+		this.weightMeasure = model.WeightInLb;
+		this.distanceMeasure = model.DistanceIn;
 	}
 }
