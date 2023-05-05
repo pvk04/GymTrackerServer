@@ -16,5 +16,5 @@ app.use("/", appRouter);
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
-  console.log(`SERVER STARTED AT PORT ${PORT}`);
+	console.log(`SERVER STARTED AT PORT ${PORT}`);
 });
